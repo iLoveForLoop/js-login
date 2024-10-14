@@ -1,5 +1,6 @@
 const alertPop = document.getElementById("alert");
-let usersList = JSON.parse(localStorage.getItem("users"));
+
+let usersList = JSON.parse(localStorage.getItem("users")) || [];
 
 const storeToStorage = () => {
   localStorage.setItem("users", JSON.stringify(usersList));
@@ -16,7 +17,6 @@ const alert = (type, message) => {
 };
 
 document.addEventListener("DOMContentLoaded", function () {
-  // Check if loginForm exists before adding event listener
   const loginForm = document.getElementById("loginForm");
   if (loginForm) {
     loginForm.addEventListener("submit", function (event) {
@@ -39,19 +39,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
           document.getElementById("username").value = "";
           document.getElementById("password").value = "";
+          window.location.href = "atm.html";
         } else {
           alert("alert-danger", "Invalid username or password.");
           //   throw new Error("Invalid username or password.");
         }
-
-        errorMessage.textContent = "";
       } catch (error) {
-        errorMessage.textContent = error.message;
+        alert("alert-danger", error.message);
       }
     });
   }
 
-  // Check if signupForm exists before adding event listener
   const signupForm = document.getElementById("signupForm");
   if (signupForm) {
     signupForm.addEventListener("submit", function (e) {
@@ -60,25 +58,29 @@ document.addEventListener("DOMContentLoaded", function () {
       const sUsername = document.getElementById("s-username").value;
       const sPassword = document.getElementById("s-password").value;
       const csPassword = document.getElementById("cs-password").value;
-
+      let message = "Account created successfully.";
       const checker = () => {
-        if (
-          sPassword === csPassword &&
-          !usersList.some((obj) => obj.username === sUsername)
-        ) {
-          return true;
+        if (sPassword !== csPassword) {
+          message = "Passsword doesn't match";
+          return false;
+        } else if (usersList.some((obj) => obj.username === sUsername)) {
+          message = "Username already exist!";
+          return false;
         }
 
-        return false;
+        return true;
       };
 
       if (checker()) {
         let newUser = { username: sUsername, password: sPassword };
         usersList.push(newUser);
         storeToStorage();
-        alert("alert-success", "Account created successfully.");
+        alert("alert-success", message);
+        document.getElementById("s-username").value = "";
+        document.getElementById("s-password").value = "";
+        document.getElementById("cs-password").value = "";
       } else {
-        alert("alert-danger", "Username already exist!");
+        alert("alert-danger", message);
       }
     });
   }
