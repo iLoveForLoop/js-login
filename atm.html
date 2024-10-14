@@ -43,8 +43,9 @@
 
     
     <script>
-        let balance = parseFloat(localStorage.getItem('totalBalance'));
-        
+        let balance = localStorage.getItem('totalBalance');
+        balance = balance ? parseFloat(balance) : 0;
+
         const checkbalanceBtn = document.getElementById('checkbalance');
         const depositBtn = document.getElementById('deposit');
         const withdrawBtn = document.getElementById('withdraw');
