@@ -9,25 +9,46 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
     <title>Crypto</title>
     <style>
-      .i-size {
+      .poppins-regular {
+        font-family: "Poppins", serif;
+        font-weight: 400;
+        font-style: normal;
+      }
+
+      .hide {
+        display: none;
+      }
+
+      .size {
+        font-size: 80px;
+      }
+
+      .size-2 {
+        font-size: 50px;
       }
     </style>
   </head>
-  <body>
+  <body class="poppins-regular">
     <div
       class="w-100 bg-dark d-flex justify-content-between align-items-center p-4"
     >
       <h1 class="text-light">Paldo.com</h1>
-      <button class="btn btn-danger">Bounce</button>
+      <button class="btn btn-danger rounded-pill" id="logout">Logout</button>
     </div>
 
     <div
       class="container d-flex flex-column align-items-center justify-content-center p-5"
     >
       <div class="mb-4">
-        <h1 class="">Search for a crypto</h1>
+        <h1 class="">Search a crypto</h1>
       </div>
       <div class="d-flex flex-column w-50 mb-4">
         <input
@@ -43,16 +64,46 @@
       </div>
     </div>
 
-    <div class="bg-light container p-5 text-dark border border-5 w-50">
-      <p id="name"></p>
-      <p id="price"></p>
-      <p id="description"></p>
+    <div class="container p-5 text-center text-dark" id="welcome">
+      <h1 class="size">Crypto Information?</h1>
+      <h1 class="size-2">I got you!</h1>
+    </div>
+
+    <div
+      class="bg-light container p-5 text-dark border border-5 border-dark hide"
+      id="result"
+    >
+      <div class="row">
+        <div class="col-5 d-flex flex-column">
+          <h4 id="name" class="fs-4"></h4>
+          <h4 id="symbol" class="fs-4"></h4>
+          <h4 id="price" class="fs-4"></h4>
+          <h4 id="market-cap" class="fs-4"></h4>
+        </div>
+
+        <div class="col-7 fs-5">
+          <h4 class="fs-4">Token Description:</h4>
+          <p id="description"></p>
+        </div>
+      </div>
     </div>
 
     <script>
       const displayName = document.getElementById("name");
+      const displaySymbol = document.getElementById("symbol");
       const displayPrice = document.getElementById("price");
+      const displayMarketCap = document.getElementById("market-cap");
       const displayDescription = document.getElementById("description");
+
+      function formatCurrency(num) {
+        const formatter = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "PHP",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+        return formatter.format(num);
+      }
 
       const load = async (crypto) => {
         try {
@@ -65,9 +116,35 @@
           }
 
           const data = await res.json();
-          displayName.innerHTML = `Token Name: ${data.name}`;
-          displayPrice.innerHTML = `Current Price: ₱${data.market_data.current_price.php}`;
-          displayDescription.innerHTML = `Token Price: ${data.description.en}`;
+
+          const cryptoDetails = {
+            id: data.id,
+            symbol: data.symbol,
+            name: data.name,
+            market_cap_rank: data.market_cap_rank,
+            description: data.description.en, // English description
+            current_price: data.market_data.current_price.php, // Price in PHP
+            market_cap: data.market_data.market_cap.php, // Market cap in PHP
+            total_volume: data.market_data.total_volume.php, // Total volume in PHP
+            price_change_percentage_24h:
+              data.market_data.price_change_percentage_24h, // Price change in the last 24 hours
+            circulating_supply: data.market_data.circulating_supply, // Circulating supply
+            total_supply: data.market_data.total_supply, // Total supply
+            max_supply: data.market_data.max_supply, // Max supply
+          };
+
+          document.getElementById("result").classList.remove("hide");
+          document.getElementById("welcome").classList.add("hide");
+
+          displayName.innerHTML = `Token Name: ${cryptoDetails.name}`;
+          displaySymbol.innerHTML = `Token Symbol: ${cryptoDetails.symbol.toUpperCase()}`;
+          displayPrice.innerHTML = `Current Price: ${formatCurrency(
+            parseFloat(cryptoDetails.current_price)
+          )}`;
+          displayMarketCap.innerHTML = `Market Cap: ${formatCurrency(
+            parseFloat(cryptoDetails.market_cap)
+          )}`;
+          displayDescription.innerHTML = `${cryptoDetails.description}`;
         } catch (error) {
           console.log(error.message);
         }
@@ -77,6 +154,10 @@
         const crypto = document.getElementById("search").value;
         load(crypto);
         document.getElementById("search").value = "";
+      });
+
+      document.getElementById("logout").addEventListener("click", (e) => {
+        window.location.href = "index.html";
       });
     </script>
 

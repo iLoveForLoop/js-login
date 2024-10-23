@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           document.getElementById("username").value = "";
           document.getElementById("password").value = "";
-          window.location.href = "atm.html";
+          window.location.href = "crypto.html";
         } else {
           alert("alert-danger", "Invalid username or password.");
           //   throw new Error("Invalid username or password.");
