@@ -119,6 +119,22 @@
             Max Supply:
             <span id="max_supply" class="fs-4 text-dark fw-medium"></span>
           </h4>
+          <h4 class="fs-4 fw-light">
+            All Time High:
+            <span id="ath" class="fs-4 text-dark fw-medium"></span>
+          </h4>
+          <h4 class="fs-4 fw-light">
+            All Time High Date:
+            <span id="ath_date" class="fs-4 text-dark fw-medium"></span>
+          </h4>
+          <h4 class="fs-4 fw-light">
+            All Time Low:
+            <span id="atl" class="fs-4 text-dark fw-medium"></span>
+          </h4>
+          <h4 class="fs-4 fw-light">
+            All Time Low Date:
+            <span id="atl_date" class="fs-4 text-dark fw-medium"></span>
+          </h4>
         </div>
 
         <div class="col-6 fs-5">
@@ -141,6 +157,10 @@
         document.getElementById("circulating_supply");
       const displayTotalSupply = document.getElementById("total_supply");
       const displayMaxSupply = document.getElementById("max_supply");
+      const displayATH = document.getElementById("ath");
+      const displayATL = document.getElementById("atl");
+      const displayATHDate = document.getElementById("ath_date");
+      const displayATLDate = document.getElementById("atl_date");
 
       const displayDescription = document.getElementById("description");
 
@@ -237,6 +257,27 @@
             displayMaxSupply.innerHTML = "∞";
           }
 
+          displayATH.innerHTML = `${formatCurrency(cryptoDetails.ath)}`;
+          displayATL.innerHTML = `${formatCurrency(cryptoDetails.atl)}`;
+
+          let athDate = new Date(cryptoDetails.ath_date);
+          let atlDate = new Date(cryptoDetails.atl_date);
+
+          const fathDate = athDate.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+
+          const fatlDate = atlDate.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          });
+
+          displayATHDate.innerHTML = `${fathDate}`;
+          displayATLDate.innerHTML = `${fatlDate}`;
+
           displayDescription.innerHTML = `${cryptoDetails.description}`;
         } catch (error) {
           console.log(error.message);
@@ -244,7 +285,7 @@
       };
 
       document.getElementById("go").addEventListener("click", (e) => {
-        const crypto = document.getElementById("search").value;
+        const crypto = document.getElementById("search").value.toLowerCase();
         load(crypto);
         document.getElementById("search").value = "";
       });
